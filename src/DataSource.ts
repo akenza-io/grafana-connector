@@ -1,5 +1,3 @@
-import defaults from 'lodash/defaults';
-
 import {
   DataQueryRequest,
   DataQueryResponse,
@@ -8,12 +6,35 @@ import {
   MutableDataFrame,
   FieldType,
 } from '@grafana/data';
-
-import { AkenzaQuery, AkenzaDataSourceConfig, defaultQuery } from './types';
+import { getBackendSrv } from '@grafana/runtime';
+import { BackendSrvRequest } from '@grafana/runtime';
+import { AkenzaQuery, AkenzaDataSourceConfig } from './types';
 
 export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfig> {
+  private baseUrl: string;
+
   constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>) {
     super(instanceSettings);
+    this.baseUrl = instanceSettings.jsonData.baseUrl;
+  }
+
+  async testDatasource() {
+    // Implement a health check for your data source.
+    return this.doRequest('').then(
+      (res: any) => {
+        console.log(res);
+        return {
+          status: 'success',
+          message: 'Success',
+        };
+      },
+      (error: any) => {
+        console.log(error);
+        return {
+          status: 'error',
+          message: error.status + ' - ' + error.statusText + ': ' + error.data?.message || 'could not verify API Key',
+        }
+    });
   }
 
   async query(options: DataQueryRequest<AkenzaQuery>): Promise<DataQueryResponse> {
@@ -23,7 +44,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
 
     // Return a constant for each query.
     const data = options.targets.map(target => {
-      const query = defaults(target, defaultQuery);
+      const query = target;
       return new MutableDataFrame({
         refId: query.refId,
         fields: [
@@ -36,11 +57,14 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
     return { data };
   }
 
-  async testDatasource() {
-    // Implement a health check for your data source.
-    return {
-      status: 'success',
-      message: 'Success',
+  private doRequest(data: string) {
+    let options: BackendSrvRequest = {
+      url: this.baseUrl + '/v1/environments',
+      headers: {},
+      method: 'GET',
     };
+    // options.headers.asd = '1ded1b6d-1f65-4ba3-8229-849fc6a7e646';
+
+    return getBackendSrv().datasourceRequest(options);
   }
 }

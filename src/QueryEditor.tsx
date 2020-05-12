@@ -1,10 +1,8 @@
-import defaults from 'lodash/defaults';
-
 import React, { ChangeEvent, PureComponent } from 'react';
 import { LegacyForms } from '@grafana/ui';
 import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from './DataSource';
-import { defaultQuery, AkenzaDataSourceConfig, AkenzaQuery } from './types';
+import { AkenzaDataSourceConfig, AkenzaQuery } from './types';
 
 const { FormField } = LegacyForms;
 
@@ -24,7 +22,7 @@ export class QueryEditor extends PureComponent<Props> {
   };
 
   render() {
-    const query = defaults(this.props.query, defaultQuery);
+    const query = this.props.query;
     const { queryText, constant } = query;
 
     return (

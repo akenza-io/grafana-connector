@@ -10,11 +10,11 @@ interface Props extends DataSourcePluginOptionsEditorProps<AkenzaDataSourceConfi
 interface State {}
 
 export class ConfigEditor extends PureComponent<Props, State> {
-  onPathChange = (event: ChangeEvent<HTMLInputElement>) => {
+  onBaseUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onOptionsChange, options } = this.props;
     const jsonData = {
       ...options.jsonData,
-      path: event.target.value,
+      baseUrl: event.target.value,
     };
     onOptionsChange({ ...options, jsonData });
   };
@@ -54,12 +54,12 @@ export class ConfigEditor extends PureComponent<Props, State> {
       <div className="gf-form-group">
         <div className="gf-form">
           <FormField
-            label="Path"
-            labelWidth={6}
-            inputWidth={20}
-            onChange={this.onPathChange}
-            value={jsonData.path || ''}
-            placeholder="json field returned to frontend"
+            label="Base URL"
+            labelWidth={10}
+            inputWidth={27}
+            onChange={this.onBaseUrlChange}
+            value={jsonData.baseUrl || ''}
+            placeholder="e.g. https://api.core.akenza.io"
           />
         </div>
 
@@ -69,9 +69,9 @@ export class ConfigEditor extends PureComponent<Props, State> {
               isConfigured={(secureJsonFields && secureJsonFields.apiKey) as boolean}
               value={secureJsonData.apiKey || ''}
               label="API Key"
-              placeholder="secure json field (backend only)"
-              labelWidth={6}
-              inputWidth={20}
+              placeholder="API Key"
+              labelWidth={10}
+              inputWidth={27}
               onReset={this.onResetAPIKey}
               onChange={this.onAPIKeyChange}
             />
