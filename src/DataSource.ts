@@ -63,7 +63,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
       headers: {},
       method: 'GET',
     };
-    options.headers['Api-Key'] = '1ded1b6d-1f65-4ba3-8229-849fc6a7e646';
+    options.headers['Api-Key'] = 'some-api-key';
 
     return getBackendSrv().datasourceRequest(options);
   }
