@@ -11,11 +11,8 @@ import { BackendSrvRequest } from '@grafana/runtime';
 import { AkenzaQuery, AkenzaDataSourceConfig } from './types';
 
 export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfig> {
-  private baseUrl: string;
-
   constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>) {
     super(instanceSettings);
-    this.baseUrl = instanceSettings.jsonData.baseUrl;
   }
 
   async testDatasource() {
@@ -33,8 +30,9 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         return {
           status: 'error',
           message: error.status + ' - ' + error.statusText + ': ' + error.data?.message || 'could not verify API Key',
-        }
-    });
+        };
+      }
+    );
   }
 
   async query(options: DataQueryRequest<AkenzaQuery>): Promise<DataQueryResponse> {
@@ -59,11 +57,9 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
 
   private doRequest(data: string) {
     let options: BackendSrvRequest = {
-      url: this.baseUrl + '/v1/environments',
-      headers: {},
+      url: 'connection-test',
       method: 'GET',
     };
-    options.headers['Api-Key'] = 'some-api-key';
 
     return getBackendSrv().datasourceRequest(options);
   }
