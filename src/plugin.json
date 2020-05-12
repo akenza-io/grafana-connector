@@ -1,0 +1,30 @@
+{
+    "type": "datasource",
+    "name": "Akenza Core Connector",
+    "id": "akenza-io-akenza-connetor",
+    "info": {
+        "description": "Datasource Plugin to visualize Device Data from the Akenza Core",
+        "author": {
+            "name": "Akenza AG",
+            "url": "https://github.com/akenza-io/grafana-connector"
+        },
+        "keywords": [
+            "Akenza",
+            "Akenza Core"
+        ],
+        "logos": {
+            "small": "assets/akenza-logo.png",
+            "large": "assets/akenza-logo.png"
+        },
+        "links": [{
+            "name": "Project site",
+            "url": "https://github.com/akenza-io/grafana-connector"
+        }],
+        "version": "1.0.0",
+        "updated": "2020-05-12"
+    },
+    "dependencies": {
+        "grafanaVersion": "4.1.1+",
+        "plugins": []
+    }
+}
