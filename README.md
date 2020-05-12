@@ -13,18 +13,15 @@ Grafana supports a wide range of data sources, including Prometheus, MySQL, and 
 ```BASH
 yarn install
 ```
-2. Build plugin in development mode or run in watch mode
-```BASH
-yarn dev
-```
-or
+2. Run in watch mode
 ```BASH
 yarn watch
 ```
-3. Build plugin in production mode
+3. Start the docker-compose Grafana instance
 ```BASH
-yarn build
+docker-compose up grafana
 ```
+The Grafana server will be started and can be accessed at [localhost:3000](). The Plugin is located at the very bottom of the Plugin list.
 
 ## Data Source Plugin Development Resources
 - [Build a data source plugin tutorial](https://grafana.com/tutorials/build-a-data-source-plugin)
