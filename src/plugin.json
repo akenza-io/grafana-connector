@@ -1,6 +1,6 @@
 {
   "type": "datasource",
-  "name": "grafana-connector",
+  "name": "Akenza Core Connector",
   "id": "akenza-grafana-connector",
   "metrics": true,
   "info": {
@@ -21,11 +21,11 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/simple-datasource"
+        "url": "https://github.com/akenza-io/grafana-connector"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/simple-datasource/blob/master/LICENSE"
+        "url": "https://github.com/akenza-io/grafana-connector/blob/master/LICENSE"
       }
     ],
     "screenshots": [],
@@ -33,7 +33,7 @@
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaVersion": "6.5.x",
+    "grafanaVersion": "7.x",
     "plugins": []
   }
 }
