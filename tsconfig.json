@@ -1,11 +1,9 @@
 {
-    "compilerOptions": {
-        "strictNullChecks": true,
-        "module": "none",
-        "target": "es6",
-        "rootDir": "./src"
-    },
-    "include": [
-        "./src/**/*.ts"
-    ]
+  "extends": "@grafana/toolkit/src/config/tsconfig.plugin.json",
+  "include": ["src", "types"],
+  "compilerOptions": {
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "typeRoots": ["./node_modules/@types"]
+  }
 }

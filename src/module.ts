@@ -1,16 +1,9 @@
-import {QueryCtrl} from 'grafana/app/plugins/sdk';
+import { DataSourcePlugin } from '@grafana/data';
+import { DataSource } from './DataSource';
+import { ConfigEditor } from './ConfigEditor';
+import { QueryEditor } from './QueryEditor';
+import { MyQuery, MyDataSourceOptions } from './types';
 
-class Ctrl extends QueryCtrl {
-
-    static template: string = "<div>Hello from <b>TypeScript Template Plugin</b></div>";
-
-    constructor($scope, $injector) {
-        super($scope, $injector);
-    }
-
-    link(scope, element) {
-    }
-
-}
-
-export { Ctrl as PanelCtrl }
+export const plugin = new DataSourcePlugin<DataSource, MyQuery, MyDataSourceOptions>(DataSource)
+  .setConfigEditor(ConfigEditor)
+  .setQueryEditor(QueryEditor);

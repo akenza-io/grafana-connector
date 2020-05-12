@@ -1,30 +1,39 @@
 {
-    "type": "datasource",
-    "name": "Akenza Core Connector",
-    "id": "akenza-io-akenza-connetor",
-    "info": {
-        "description": "Datasource Plugin to visualize Device Data from the Akenza Core",
-        "author": {
-            "name": "Akenza AG",
-            "url": "https://github.com/akenza-io/grafana-connector"
-        },
-        "keywords": [
-            "Akenza",
-            "Akenza Core"
-        ],
-        "logos": {
-            "small": "assets/akenza-logo.png",
-            "large": "assets/akenza-logo.png"
-        },
-        "links": [{
-            "name": "Project site",
-            "url": "https://github.com/akenza-io/grafana-connector"
-        }],
-        "version": "1.0.0",
-        "updated": "2020-05-12"
+  "type": "datasource",
+  "name": "grafana-connector",
+  "id": "akenza-grafana-connector",
+  "metrics": true,
+  "info": {
+    "description": "Enables the Akenza Core as Data Source",
+    "author": {
+      "name": "David Giger",
+      "url": "https://akenza.com"
     },
-    "dependencies": {
-        "grafanaVersion": "4.1.1+",
-        "plugins": []
-    }
+    "keywords": [
+      "akenza core",
+      "akenza",
+      "IoT"
+    ],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/grafana/simple-datasource"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/grafana/simple-datasource/blob/master/LICENSE"
+      }
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaVersion": "6.5.x",
+    "plugins": []
+  }
 }
