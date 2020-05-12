@@ -1,6 +1,6 @@
-import { PanelCtrl } from 'grafana/app/plugins/sdk';
+import {QueryCtrl} from 'grafana/app/plugins/sdk';
 
-class Ctrl extends PanelCtrl {
+class Ctrl extends QueryCtrl {
 
     static template: string = "<div>Hello from <b>TypeScript Template Plugin</b></div>";
 
