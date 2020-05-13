@@ -11,6 +11,7 @@ import { BackendSrvRequest } from '@grafana/runtime';
 import { AkenzaQuery, AkenzaDataSourceConfig } from './types';
 
 export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfig> {
+
   constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>) {
     super(instanceSettings);
   }
@@ -57,7 +58,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
 
   private doRequest(data: string) {
     let options: BackendSrvRequest = {
-      url: 'connection-test',
+      url: '/connection-test',
       method: 'GET',
     };
 
