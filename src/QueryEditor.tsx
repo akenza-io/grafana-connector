@@ -19,7 +19,7 @@ export class QueryEditor extends PureComponent<Props> {
             this.props.datasource.getAssets().then(
                 (assets: Asset[]) => {
                     for (const asset of assets) {
-                        this.assetSelectOptions.push({label: asset.name, value: asset.id});
+                        this.assetSelectOptions.push({label: asset.name, value: asset.id, asset: asset});
                     }
                 },
                 (err: any) => {
@@ -66,21 +66,25 @@ export class QueryEditor extends PureComponent<Props> {
         return (
             <div className="gf-form">
                 <Select
-                    placeholder={'Select an Asset'}
+                    autoFocus={true}
+                    placeholder={'Select an asset'}
+                    noOptionsMessage={'No assets available'}
                     options={this.assetSelectOptions}
                     value={this.props.query.assetId}
                     onChange={this.onAssetSelectionChange}
                 />
                 <Select
                     disabled={!this.props.query.assetId}
-                    placeholder={'Select a Topic'}
+                    placeholder={'Select a topic'}
+                    noOptionsMessage={'No topics found'}
                     options={this.topicsSelectOptions}
                     value={this.props.query.topic}
                     onChange={this.onTopicSelectionChange}
                 />
                 <Select
                     disabled={!this.props.query.topic}
-                    placeholder={'select a data key'}
+                    placeholder={'Select a data key'}
+                    noOptionsMessage={'No data keys found'}
                     options={this.keySelectOptions}
                     value={this.props.query.dataKey}
                     onChange={this.onKeySelectionChange}
@@ -92,7 +96,7 @@ export class QueryEditor extends PureComponent<Props> {
     onAssetSelectionChange = (event: SelectableValue<string>): void => {
         const {onChange, query} = this.props;
         if (event.value) {
-            onChange({...query, assetId: event.value});
+            onChange({...query, assetId: event.value, asset: event.asset});
             this.loadTopics(event.value);
             // executes the query
             // onRunQuery();
@@ -112,7 +116,7 @@ export class QueryEditor extends PureComponent<Props> {
     onKeySelectionChange = (event: SelectableValue<string>): void => {
         const {onChange, query, onRunQuery} = this.props;
         if (event.value) {
-            onChange({...query, key: event.value});
+            onChange({...query, dataKey: event.value});
             // this.loadKeys(query.assetId, event.value);
             // executes the query
             onRunQuery();

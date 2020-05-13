@@ -2,25 +2,25 @@ import {
     DataQueryRequest,
     DataQueryResponse,
     DataSourceApi,
-    DataSourceInstanceSettings,
-    MutableDataFrame,
+    DataSourceInstanceSettings, DateTime,
     FieldType,
+    MutableDataFrame,
 } from '@grafana/data';
-import {BackendSrv} from '@grafana/runtime';
-import {BackendSrvRequest} from '@grafana/runtime';
+import {BackendSrv, BackendSrvRequest} from '@grafana/runtime';
 import {
-    AkenzaQuery,
     AkenzaDataSourceConfig,
-    HttpPromise,
-    AssetList,
-    EnvironmentList,
+    AkenzaQuery,
     Asset,
-    Environment, AssetData
+    AssetData,
+    AssetList,
+    Environment,
+    EnvironmentList,
+    HttpPromise, TimeSeriesData
 } from './types';
 
 export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfig> {
-    private baseUrl: string;
-    private apiKey: string;
+    private readonly baseUrl: string;
+    private readonly apiKey: string;
     private environmentId = '';
 
     constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>, private backendSrv: BackendSrv) {
@@ -47,6 +47,53 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         );
     }
 
+    async query(options: DataQueryRequest<AkenzaQuery>): Promise<DataQueryResponse> {
+        const from: DateTime = options.range.from;
+        const to: DateTime = options.range.to;
+        const panelData: MutableDataFrame[] = [];
+        for (let target of options.targets) {
+            if (target.assetId && target.topic && target.dataKey) {
+                const timeSeriesData = await this.getTimeSeriesData(target, from.toISOString(), to.toISOString());
+                const data: number[] = [];
+                const time: number[] = [];
+                for (let dataPoint of timeSeriesData.dataPoints) {
+                    // first entry in the array is always the value
+                    data.push(dataPoint[0]);
+                    // converts the ISO String to unix timestamp
+                    time.push(new Date(dataPoint[1]).valueOf());
+                }
+                panelData.push(new MutableDataFrame({
+                    refId: target.refId,
+                    fields: [
+                        {name: 'Time', values: time, type: FieldType.time},
+                        {name: target.asset.name + ' - ' + target.dataKey, values: data, type: FieldType.number},
+                    ],
+                }));
+            }
+        }
+
+        return {data: panelData};
+    }
+
+    async getTimeSeriesData(query: AkenzaQuery, from: string, to: string): Promise<TimeSeriesData> {
+        const body = {
+            dataKey: query.dataKey,
+            topic: query.topic,
+            timestamp: {
+                gte: from,
+                lte: to,
+            },
+        };
+
+        return this.doRequest('/v3/assets/' + query.assetId + '/query/time-series', 'POST', null, body).then(
+            (timeSeriesData: HttpPromise<TimeSeriesData>) => {
+                return timeSeriesData.data;
+            }, (error: any) => {
+                return error;
+            }
+        );
+    }
+
     async getAssets(): Promise<Asset[]> {
         const params = {
             unpaged: true,
@@ -56,6 +103,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         this.environmentId = await this.getEnvironment().then(environment => {
             return environment.id;
         });
+
         return this.doRequest('/v2/environments/' + this.environmentId + '/devices', 'GET', params).then(
             (assetListHttpPromise: HttpPromise<AssetList>) => {
                 return assetListHttpPromise.data.data;
@@ -72,7 +120,6 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                 return topics.data;
             },
             (err: any) => {
-                console.log(err)
                 return err
             });
     }
@@ -105,25 +152,6 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         );
     }
 
-    async query(options: DataQueryRequest<AkenzaQuery>): Promise<DataQueryResponse> {
-        const {range} = options;
-        const from = range!.from.valueOf();
-        const to = range!.to.valueOf();
-        // Return a constant for each query.
-        const data = options.targets.map(target => {
-            const query = target;
-            return new MutableDataFrame({
-                refId: query.refId,
-                fields: [
-                    {name: 'Time', values: [from, to], type: FieldType.time},
-                    {name: 'Value', values: [], type: FieldType.number},
-                ],
-            });
-        });
-
-        return {data};
-    }
-
     private doRequest(url: string, method: string, params?: any, data?: any) {
         const options: BackendSrvRequest = {
             url: this.baseUrl + url,
@@ -132,11 +160,9 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                 'Api-Key': this.apiKey,
             },
         };
-
         if (params) {
             options.params = params;
         }
-
         if (data) {
             options.data = data;
         }

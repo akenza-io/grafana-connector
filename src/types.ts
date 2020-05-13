@@ -2,6 +2,7 @@ import { DataQuery, DataSourceJsonData } from '@grafana/data';
 
 export interface AkenzaQuery extends DataQuery {
   assetId: string;
+  asset: Asset;
   topic: string;
   dataKey: string;
 }
@@ -40,6 +41,11 @@ export interface AssetData {
     timestamp: string;
     topic: string;
     data: any;
+}
+
+export interface TimeSeriesData {
+    dataPoints: any[];
+    key: string;
 }
 
 export interface Environment {
