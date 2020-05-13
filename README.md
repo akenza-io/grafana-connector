@@ -5,6 +5,7 @@ This plugin enables the use of Akenza Core Device Data to be visualized in Grafa
 ## Things to keep in mind
 * logo -> svg format and dark/light theme compatibility
 * add types
+* error messages if e.g. keys loading failed
 
 ## What is Grafana Data Source Plugin?
 Grafana supports a wide range of data sources, including Prometheus, MySQL, and even Datadog. There’s a good chance you can already visualize metrics from the systems you have set up. In some cases, though, you already have an in-house metrics solution that you’d like to add to your Grafana dashboards. Grafana Data Source Plugins enables integrating such solutions with Grafana.
