@@ -6,13 +6,13 @@ import {
   MutableDataFrame,
   FieldType,
 } from '@grafana/data';
-import { getBackendSrv } from '@grafana/runtime';
+import { BackendSrv } from '@grafana/runtime';
 import { BackendSrvRequest } from '@grafana/runtime';
 import { AkenzaQuery, AkenzaDataSourceConfig } from './types';
 
 export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfig> {
 
-  constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>) {
+  constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>, private backendSrv: BackendSrv) {
     super(instanceSettings);
   }
 
@@ -57,11 +57,11 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
   }
 
   private doRequest(data: string) {
-    let options: BackendSrvRequest = {
+    const options: BackendSrvRequest = {
       url: '/connection-test',
       method: 'GET',
     };
 
-    return getBackendSrv().datasourceRequest(options);
+    return this.backendSrv.datasourceRequest(options);
   }
 }
