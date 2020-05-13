@@ -14,6 +14,7 @@ export const defaultQuery: Partial<AkenzaQuery> = {
  */
 export interface AkenzaDataSourceConfig extends DataSourceJsonData {
   baseUrl: string;
+  apiKey: string;
 }
 
 /**
