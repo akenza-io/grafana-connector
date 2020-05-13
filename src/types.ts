@@ -1,13 +1,8 @@
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
 
 export interface AkenzaQuery extends DataQuery {
-  queryText?: string;
-  constant: number;
+  assetId?: string;
 }
-
-export const defaultQuery: Partial<AkenzaQuery> = {
-  constant: 6.5,
-};
 
 /**
  * These are options configured for each DataSource instance
@@ -22,4 +17,38 @@ export interface AkenzaDataSourceConfig extends DataSourceJsonData {
  */
 export interface AkenzaSecureDataSourceConfig {
   apiKey: string;
+}
+
+
+export interface Asset {
+  id: string;
+  name: string;
+  // no other properties since the API call is made using the fields param
+}
+
+export interface AssetList {
+  offset: number;
+  limit: number;
+  total: number;
+  data: Asset[];
+}
+
+export interface Environment {
+  id: string;
+  name: string;
+  // other properties omitted
+}
+
+export interface EnvironmentList {
+  offset: number;
+  limit: number;
+  total: number;
+  data: Environment[];
+}
+
+export interface HttpPromise<T> {
+  status: number;
+  statusText: string;
+  xhrStatus: string;
+  data: T;
 }
