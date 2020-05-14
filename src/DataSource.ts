@@ -6,7 +6,7 @@ import {
     FieldType,
     MutableDataFrame,
 } from '@grafana/data';
-import {BackendSrv, BackendSrvRequest} from '@grafana/runtime';
+import { BackendSrv, BackendSrvRequest } from '@grafana/runtime';
 import {
     AkenzaDataSourceConfig,
     AkenzaQuery,

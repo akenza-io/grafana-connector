@@ -5,5 +5,5 @@ import { QueryEditor } from './QueryEditor';
 import { AkenzaQuery, AkenzaDataSourceConfig } from './types';
 
 export const plugin = new DataSourcePlugin<DataSource, AkenzaQuery, AkenzaDataSourceConfig>(DataSource)
-  .setConfigEditor(ConfigEditor)
-  .setQueryEditor(QueryEditor);
+    .setConfigEditor(ConfigEditor)
+    .setQueryEditor(QueryEditor);

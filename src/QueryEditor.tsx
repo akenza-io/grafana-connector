@@ -1,8 +1,8 @@
-import React, {PureComponent} from 'react';
-import {Select} from '@grafana/ui';
-import {QueryEditorProps, SelectableValue} from '@grafana/data';
-import {DataSource} from './DataSource';
-import {AkenzaDataSourceConfig, AkenzaQuery, Asset, QueryEditorState} from './types';
+import React, { PureComponent } from 'react';
+import { Select } from '@grafana/ui';
+import { QueryEditorProps, SelectableValue } from '@grafana/data';
+import { DataSource } from './DataSource';
+import { AkenzaDataSourceConfig, AkenzaQuery, Asset, QueryEditorState } from './types';
 
 type Props = QueryEditorProps<DataSource, AkenzaQuery, AkenzaDataSourceConfig>;
 
@@ -15,6 +15,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     constructor(props: Props) {
         super(props);
         const query = this.props.query;
+        // initialize the selects
         this.state = {
             assetSelect: {
                 value: query.assetId,
@@ -28,6 +29,11 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 value: query.dataKey,
                 options: [{label: query.dataKey, value: query.dataKey}]
             },
+        }
+        // load topics and queries if the panel has been saved
+        if (query.assetId && query.topic) {
+            this.loadTopics(query.assetId);
+            this.loadKeys(query.assetId, query.topic);
         }
     }
 
@@ -105,7 +111,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     }
 
     render() {
-        const { assetSelect, topicSelect, dataKeySelect } = this.state;
+        const {assetSelect, topicSelect, dataKeySelect} = this.state;
         // load all available assets on render
         this.loadAssets();
 
