@@ -3002,6 +3002,11 @@ buffer@^4.3.0:
     ieee754 "^1.1.4"
     isarray "^1.0.0"
 
+build-url@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/build-url/-/build-url-2.0.0.tgz#7bdd4045e51caa96c1586990e4ca514937598fc2"
+  integrity sha512-LYvvOlDc9jT07wFXTQTKoQLYaXIJriVl/DgatTsSzY963+ip1O7M6G/jWBrlKKJ1L7HGD3oK+WykmOvbcSYXlQ==
+
 builtin-status-codes@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz#85982878e21b98e1c66425e03d0174788f569ee8"
@@ -7751,11 +7756,6 @@ moment@2.24.0, moment@2.x:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
-
-moment@^2.25.3:
-  version "2.25.3"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.25.3.tgz#252ff41319cf41e47761a1a88cab30edfe9808c0"
-  integrity sha512-PuYv0PHxZvzc15Sp8ybUCoQ+xpyPWvjOuK72a5ovzp2LI32rJXOiIfyoFoYvG3s6EwwrdkMyWuRiEHSZRLJNdg==
 
 move-concurrently@^1.0.1:
   version "1.0.1"

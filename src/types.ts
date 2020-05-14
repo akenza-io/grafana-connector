@@ -1,4 +1,4 @@
-import { DataQuery, DataSourceJsonData } from '@grafana/data';
+import {DataQuery, DataSourceJsonData, SelectableValue} from '@grafana/data';
 
 export interface AkenzaQuery extends DataQuery {
   assetId: string;
@@ -66,4 +66,19 @@ export interface HttpPromise<T> {
   statusText: string;
   xhrStatus: string;
   data: T;
+}
+
+export interface QueryEditorState {
+    assetSelect: {
+        value?: string,
+        options: SelectableValue[]
+    };
+    topicSelect: {
+        value?: string,
+        options: SelectableValue[]
+    };
+    dataKeySelect: {
+        value?: string,
+        options: SelectableValue[]
+    };
 }

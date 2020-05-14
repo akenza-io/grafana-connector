@@ -17,6 +17,7 @@ import {
     EnvironmentList,
     HttpPromise, TimeSeriesData
 } from './types';
+import buildUrl from 'build-url';
 
 export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfig> {
     private readonly baseUrl: string;
@@ -30,7 +31,6 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
     }
 
     async testDatasource() {
-        // Implement a health check for your data source.
         return this.doRequest('/v1/environments', 'GET').then(
             () => {
                 return {
@@ -39,9 +39,10 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                 };
             },
             (error: any) => {
+                let message = error.status === 401 ? '401 Unauthorized - API Key provided is not valid' : (error.data?.message || 'could not verify API Key');
                 return {
                     status: 'error',
-                    message: error.data?.message || 'could not verify API Key',
+                    message: message,
                 };
             }
         );
@@ -108,8 +109,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             (assetListHttpPromise: HttpPromise<AssetList>) => {
                 return assetListHttpPromise.data.data;
             },
-            (err: any) => {
-                return err;
+            (error: any) => {
+                return error;
             }
         );
     }
@@ -119,8 +120,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             (topics: HttpPromise<string[]>) => {
                 return topics.data;
             },
-            (err: any) => {
-                return err
+            (error: any) => {
+                return error
             });
     }
 
@@ -130,6 +131,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             limit: 1,
             skip: 0,
         };
+
         return this.doRequest('/v3/assets/' + assetId + '/query', 'POST', null, queryOptions).then(
             (res: HttpPromise<AssetData[]>) => {
                 const keys: string[] = [];
@@ -146,26 +148,22 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             (environmentListHttpPromise: HttpPromise<EnvironmentList>) => {
                 return environmentListHttpPromise.data.data[0];
             },
-            (err: any) => {
-                return err;
+            (error: any) => {
+                return error;
             }
         );
     }
 
-    private doRequest(url: string, method: string, params?: any, data?: any) {
+    private doRequest(path: string, method: string, params?: any, data?: any) {
         const options: BackendSrvRequest = {
-            url: this.baseUrl + url,
-            method: method,
+            url: buildUrl(this.baseUrl, {path}),
+            method,
+            params,
+            data,
             headers: {
                 'Api-Key': this.apiKey,
             },
         };
-        if (params) {
-            options.params = params;
-        }
-        if (data) {
-            options.data = data;
-        }
 
         return this.backendSrv.datasourceRequest(options);
     }
