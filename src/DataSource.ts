@@ -59,7 +59,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                     refId: target.refId,
                     fields: [
                         {name: 'Time', values: time, type: FieldType.time},
-                        {name: target.asset.name + ' - ' + target.dataKey, values: data, type: FieldType.number},
+                        {name: target.asset?.name + ' - ' + target.dataKey, values: data, type: FieldType.number},
                     ],
                 }));
             }
@@ -163,8 +163,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
     private generateErrorMessage(error: HttpErrorPromise) {
         if (error.status === 401) {
             return  '401 Unauthorized - API Key provided is not valid';
-        } else if (error.status && error.statusText) {
-            return error.status + ' - ' + error.statusText
+        } else if (error.statusText && error.data?.message) {
+            return error.status + ' ' + error.statusText + ': ' + error.data.message;
         } else {
             return 'An unknown error occurred, please contact Akenza Support: support@akenza.com';
         }

@@ -25,16 +25,10 @@ export interface AkenzaErrorMessage {
 }
 
 export interface QueryEditorState {
-    assetSelect: {
-        value?: string,
-        options: SelectableValue[]
-    };
-    topicSelect: {
-        value?: string,
-        options: SelectableValue[]
-    };
-    dataKeySelect: {
-        value?: string,
-        options: SelectableValue[]
-    };
+    assetValue?: SelectableValue;
+    assetOptions: SelectableValue[];
+    topicValue?: SelectableValue,
+    topicOptions: SelectableValue[]
+    dataKeyValue?: SelectableValue,
+    dataKeyOptions: SelectableValue[]
 }

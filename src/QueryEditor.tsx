@@ -12,26 +12,33 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     private loadingAssets = false;
     private loadingTopics = false;
     private loadingDataKeys = false;
-    private dataSourceId: number = Number.NEGATIVE_INFINITY;
+    private initialLoadingComplete = false;
+    private dataSourceId: number;
 
     constructor(props: Props) {
         super(props);
+        this.initializeViewProperties();
+        this.dataSourceId = this.props.datasource.id;
+    }
+
+    private initializeViewProperties() {
         const query = this.props.query;
         // initialize the select states
+        const assetSelectValue = {
+            label: query.asset?.name || undefined,
+            value: query.assetId || null,
+            asset: query.asset
+        };
+        const topicSelectValue = {label: query.topic, value: query.topic || null};
+        const dataKeySelectValue = {label: query.dataKey, value: query.dataKey || null};
         this.state = {
-            assetSelect: {
-                value: query.assetId,
-                options: [{label: query.asset?.name || undefined, value: query.assetId, asset: query.asset}]
-            },
-            topicSelect: {
-                value: query.topic,
-                options: [{label: query.topic, value: query.topic}]
-            },
-            dataKeySelect: {
-                value: query.dataKey,
-                options: [{label: query.dataKey, value: query.dataKey}]
-            },
-        }
+            assetValue: assetSelectValue,
+            assetOptions: [assetSelectValue],
+            topicValue: topicSelectValue,
+            topicOptions: [topicSelectValue],
+            dataKeyValue: dataKeySelectValue,
+            dataKeyOptions: [dataKeySelectValue],
+        };
         this.loadAssets();
         // load topics and queries if the panel has been saved
         if (query.assetId && query.topic) {
@@ -44,20 +51,24 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
         // render() is called multiple times, in order to avoid spam calling our API this check has been put into place
         if (!this.loadingAssets && this.dataSourceId != this.props.datasource.id) {
             this.loadingAssets = true;
-            this.dataSourceId = this.props.datasource.id;
+            console.log(this.dataSourceId, this.props.datasource.id, this.initialLoadingComplete)
+            if (this.dataSourceId != this.props.datasource.id && this.initialLoadingComplete) {
+                this.resetAllValues();
+                this.dataSourceId = this.props.datasource.id;
+            }
+
             this.props.datasource.getAssets().then(
                 (assets: Asset[]) => {
                     const assetSelectOptions: Array<SelectableValue<string>> = [];
                     for (const asset of assets) {
                         assetSelectOptions.push({label: asset.name, value: asset.id, asset: asset});
                     }
-                    this.setState({
-                        assetSelect: {
-                            value: undefined,
-                            options: assetSelectOptions,
-                        }
-                    });
+                    this.setState(prevState => ({
+                        ...prevState,
+                        assetOptions: assetSelectOptions,
+                    }));
                     this.loadingAssets = false;
+                    this.initialLoadingComplete = true;
                     // initial render sometimes does not update the select, hence the force update
                     this.forceUpdate();
                 },
@@ -80,17 +91,52 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 this.loadingTopics = false;
                 this.setState(prevState => ({
                     ...prevState,
-                    topicSelect: {
-                        value: undefined,
-                        options: topicsSelectOptions,
-                    }
+                    topicOptions: topicsSelectOptions,
                 }));
+                if (topicsSelectOptions.length === 0) {
+                    // if no topics were found, reset dataKey and topic values options
+                    this.resetTopicAndDataKeyValues();
+                }
             },
             // in case an error is thrown, stop the loading animation
             () => {
                 this.loadingTopics = false;
             }
         )
+    }
+
+    private resetAllValues() {
+        const {onChange, query} = this.props;
+        onChange({
+            ...query,
+            assetId: '',
+            asset: undefined,
+            topic: '',
+            dataKey: '',
+        });
+        this.setState({
+            assetValue: {},
+            assetOptions: [],
+            topicValue: {},
+            topicOptions: [],
+            dataKeyValue: {},
+            dataKeyOptions: [],
+        });
+    }
+
+    private resetTopicAndDataKeyValues() {
+        const {onChange, query} = this.props;
+        onChange({
+            ...query,
+            topic: '',
+            dataKey: '',
+        });
+        this.setState(prevState => ({
+            ...prevState,
+            topicValue: {},
+            dataKeyValue: {},
+            dataKeyOptions: [],
+        }));
     }
 
     private loadKeys(assetId: string, topic: string): void {
@@ -104,10 +150,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 this.loadingDataKeys = false;
                 this.setState(prevState => ({
                     ...prevState,
-                    dataKeySelect: {
-                        value: undefined,
-                        options: keySelectOptions,
-                    }
+                    dataKeyOptions: keySelectOptions,
                 }));
             },
             // in case an error is thrown, stop the loading animation
@@ -118,7 +161,15 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     }
 
     render() {
-        const {assetSelect, topicSelect, dataKeySelect} = this.state;
+        const {
+            assetOptions,
+            assetValue,
+            dataKeyOptions,
+            dataKeyValue,
+            topicOptions,
+            topicValue,
+        } = this.state;
+        this.loadAssets();
 
         return (
             <div className="gf-form">
@@ -128,8 +179,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     prefix={'Asset:'}
                     placeholder={'Select an asset'}
                     noOptionsMessage={'No assets available'}
-                    options={assetSelect.options}
-                    value={assetSelect.value}
+                    options={assetOptions}
+                    value={assetValue}
                     backspaceRemovesValue={true}
                     onChange={this.onAssetSelectionChange}
                 />
@@ -139,8 +190,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     prefix={'Topic:'}
                     placeholder={'Select a topic'}
                     noOptionsMessage={'No topics found'}
-                    options={topicSelect.options}
-                    value={topicSelect.value}
+                    options={topicOptions}
+                    value={topicValue}
                     backspaceRemovesValue={true}
                     onChange={this.onTopicSelectionChange}
                 />
@@ -150,8 +201,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     prefix={'Data Key:'}
                     placeholder={'Select a data key'}
                     noOptionsMessage={'No data keys found'}
-                    options={dataKeySelect.options}
-                    value={dataKeySelect.value}
+                    options={dataKeyOptions}
+                    value={dataKeyValue}
                     backspaceRemovesValue={true}
                     onChange={this.onKeySelectionChange}
                 />
@@ -160,38 +211,53 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     }
 
     onAssetSelectionChange = (event: SelectableValue<string>): void => {
-        const {onChange, query} = this.props;
+        const {onChange, query, onRunQuery} = this.props;
         onChange({
             ...query,
-            assetId: event.value || '',
-            asset: event.asset
+            assetId: event.value,
+            asset: event.asset,
         });
+        this.setState(prevState => ({
+            ...prevState,
+            assetValue: event,
+        }));
+
         if (event.value) {
             this.loadTopics(event.value);
         }
+        // executes the query
+        onRunQuery();
     };
 
     onTopicSelectionChange = (event: SelectableValue<string>): void => {
-        const {onChange, query} = this.props;
+        const {onChange, query, onRunQuery} = this.props;
         onChange({
             ...query,
-            topic: event.value || ''
+            topic: event.value,
         });
-        if (event.value) {
+        this.setState(prevState => ({
+            ...prevState,
+            topicValue: event,
+        }));
+        if (event.value && query.assetId) {
             this.loadKeys(query.assetId, event.value);
         }
+        // executes the query
+        onRunQuery();
     };
 
     onKeySelectionChange = (event: SelectableValue<string>): void => {
         const {onChange, query, onRunQuery} = this.props;
         onChange({
             ...query,
-            dataKey: event.value || ''
+            dataKey: event.value,
         });
-        if (event.value && this.props.query.assetId && this.props.query.topic) {
-            // executes the query
-            onRunQuery();
-        }
+        this.setState(prevState => ({
+            ...prevState,
+            dataKeyValue: event,
+        }));
+        // executes the query
+        onRunQuery();
     };
 
 }

@@ -32,19 +32,6 @@
         "version": "%VERSION%",
         "updated": "%TODAY%"
     },
-    "routes": [
-        {
-            "path": "connection-test",
-            "method": "*",
-            "url": "{{.JsonData.baseUrl}}/v1/environments",
-            "headers": [
-                {
-                    "name": "Api-Key",
-                    "content": "{{.SecureJsonData.apiKey}}"
-                }
-            ]
-        }
-    ],
     "dependencies": {
         "grafanaVersion": "7.x",
         "plugins": []
