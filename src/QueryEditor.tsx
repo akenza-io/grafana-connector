@@ -14,18 +14,19 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
 
     constructor(props: Props) {
         super(props);
+        const query = this.props.query;
         this.state = {
             assetSelect: {
-                value: undefined,
-                options: []
+                value: query.assetId,
+                options: [{label: query.asset?.name || undefined, value: query.assetId, asset: query.asset}]
             },
             topicSelect: {
-                value: undefined,
-                options: []
+                value: query.topic,
+                options: [{label: query.topic, value: query.topic}]
             },
             dataKeySelect: {
-                value: undefined,
-                options: []
+                value: query.dataKey,
+                options: [{label: query.dataKey, value: query.dataKey}]
             },
         }
     }
@@ -48,6 +49,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                         }
                     });
                     this.loadingAssets = false;
+                    // initial render sometimes does not update the select, hence the force update
+                    this.forceUpdate();
                 },
                 (err: any) => {
                     this.loadingAssets = false;

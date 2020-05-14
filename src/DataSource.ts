@@ -53,7 +53,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         const to: DateTime = options.range.to;
         const panelData: MutableDataFrame[] = [];
         for (let target of options.targets) {
-            if (target.assetId && target.topic && target.dataKey) {
+            if (target.assetId && target.topic && target.dataKey && !target.hide) {
                 const timeSeriesData = await this.getTimeSeriesData(target, from.toISOString(), to.toISOString());
                 const data: number[] = [];
                 const time: number[] = [];
