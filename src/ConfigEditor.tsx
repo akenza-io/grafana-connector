@@ -1,7 +1,7 @@
 import React, { ChangeEvent, PureComponent } from 'react';
 import { LegacyForms } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
-import { AkenzaDataSourceConfig } from './types';
+import { AkenzaDataSourceConfig } from './types/PluginTypes';
 
 const {FormField} = LegacyForms;
 

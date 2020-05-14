@@ -7,17 +7,10 @@ import {
     MutableDataFrame,
 } from '@grafana/data';
 import { BackendSrv, BackendSrvRequest } from '@grafana/runtime';
-import {
-    AkenzaDataSourceConfig,
-    AkenzaQuery,
-    Asset,
-    AssetData,
-    AssetList,
-    Environment,
-    EnvironmentList,
-    HttpPromise, TimeSeriesData
-} from './types';
 import buildUrl from 'build-url';
+import { Asset, AssetData, AssetList, Environment, EnvironmentList, TimeSeriesData } from './types/AkenzaTypes';
+import { AkenzaDataSourceConfig, AkenzaQuery } from './types/PluginTypes';
+import { HttpErrorPromise, HttpPromise } from './types/Utils';
 
 export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfig> {
     private readonly baseUrl: string;
@@ -38,11 +31,10 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                     message: 'Success',
                 };
             },
-            (error: any) => {
-                let message = error.status === 401 ? '401 Unauthorized - API Key provided is not valid' : (error.data?.message || 'could not verify API Key');
+            (error: HttpErrorPromise) => {
                 return {
                     status: 'error',
-                    message: message,
+                    message: this.generateErrorMessage(error),
                 };
             }
         );
@@ -89,8 +81,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         return this.doRequest('/v3/assets/' + query.assetId + '/query/time-series', 'POST', null, body).then(
             (timeSeriesData: HttpPromise<TimeSeriesData>) => {
                 return timeSeriesData.data;
-            }, (error: any) => {
-                return error;
+            }, (error: HttpErrorPromise) => {
+                throw this.generateErrorMessage(error);
             }
         );
     }
@@ -109,8 +101,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             (assetListHttpPromise: HttpPromise<AssetList>) => {
                 return assetListHttpPromise.data.data;
             },
-            (error: any) => {
-                return error;
+            (error: HttpErrorPromise) => {
+                throw this.generateErrorMessage(error);
             }
         );
     }
@@ -120,8 +112,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             (topics: HttpPromise<string[]>) => {
                 return topics.data;
             },
-            (error: any) => {
-                return error
+            (error: HttpErrorPromise) => {
+                throw this.generateErrorMessage(error)
             });
     }
 
@@ -138,8 +130,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                 Object.keys(res.data[0].data).forEach(key => keys.push(key));
                 return keys;
             },
-            (error: any) => {
-                return error;
+            (error: HttpErrorPromise) => {
+                throw this.generateErrorMessage(error);
             });
     }
 
@@ -148,8 +140,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             (environmentListHttpPromise: HttpPromise<EnvironmentList>) => {
                 return environmentListHttpPromise.data.data[0];
             },
-            (error: any) => {
-                return error;
+            (error: HttpErrorPromise) => {
+                throw this.generateErrorMessage(error);
             }
         );
     }
@@ -166,5 +158,15 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         };
 
         return this.backendSrv.datasourceRequest(options);
+    }
+
+    private generateErrorMessage(error: HttpErrorPromise) {
+        if (error.status === 401) {
+            return  '401 Unauthorized - API Key provided is not valid';
+        } else if (error.status && error.statusText) {
+            return error.status + ' - ' + error.statusText
+        } else {
+            return 'An unknown error occurred, please contact Akenza Support: support@akenza.com';
+        }
     }
 }

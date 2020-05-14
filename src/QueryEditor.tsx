@@ -2,7 +2,9 @@ import React, { PureComponent } from 'react';
 import { Select } from '@grafana/ui';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { DataSource } from './DataSource';
-import { AkenzaDataSourceConfig, AkenzaQuery, Asset, QueryEditorState } from './types';
+import { Asset } from './types/AkenzaTypes';
+import { AkenzaDataSourceConfig, AkenzaQuery } from './types/PluginTypes';
+import { QueryEditorState } from './types/Utils';
 
 type Props = QueryEditorProps<DataSource, AkenzaQuery, AkenzaDataSourceConfig>;
 
