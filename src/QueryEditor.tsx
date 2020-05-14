@@ -23,14 +23,20 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
 
     private initializeViewProperties() {
         const query = this.props.query;
-        // initialize the select states
+        // initialize the select values and their options if the panel has been saved before, will initialize empty otherwise
         const assetSelectValue = {
             label: query.asset?.name || undefined,
             value: query.assetId || null,
             asset: query.asset
         };
-        const topicSelectValue = {label: query.topic, value: query.topic || null};
-        const dataKeySelectValue = {label: query.dataKey, value: query.dataKey || null};
+        const topicSelectValue = {
+            label: query.topic,
+            value: query.topic || null
+        };
+        const dataKeySelectValue = {
+            label: query.dataKey,
+            value: query.dataKey || null
+        };
         this.state = {
             assetValue: assetSelectValue,
             assetOptions: [assetSelectValue],
@@ -51,7 +57,6 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
         // render() is called multiple times, in order to avoid spam calling our API this check has been put into place
         if (!this.loadingAssets && this.dataSourceId != this.props.datasource.id) {
             this.loadingAssets = true;
-            console.log(this.dataSourceId, this.props.datasource.id, this.initialLoadingComplete)
             if (this.dataSourceId != this.props.datasource.id && this.initialLoadingComplete) {
                 this.resetAllValues();
                 this.dataSourceId = this.props.datasource.id;
@@ -69,7 +74,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     }));
                     this.loadingAssets = false;
                     this.initialLoadingComplete = true;
-                    // initial render sometimes does not update the select, hence the force update
+                    // initial render does not update the select loading state, hence the force update
+                    // it won't trigger a re-rendering of the view, since the above checks prevent this
                     this.forceUpdate();
                 },
                 // in case an error is thrown, stop the loading animation
@@ -103,40 +109,6 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 this.loadingTopics = false;
             }
         )
-    }
-
-    private resetAllValues() {
-        const {onChange, query} = this.props;
-        onChange({
-            ...query,
-            assetId: '',
-            asset: undefined,
-            topic: '',
-            dataKey: '',
-        });
-        this.setState({
-            assetValue: {},
-            assetOptions: [],
-            topicValue: {},
-            topicOptions: [],
-            dataKeyValue: {},
-            dataKeyOptions: [],
-        });
-    }
-
-    private resetTopicAndDataKeyValues() {
-        const {onChange, query} = this.props;
-        onChange({
-            ...query,
-            topic: '',
-            dataKey: '',
-        });
-        this.setState(prevState => ({
-            ...prevState,
-            topicValue: {},
-            dataKeyValue: {},
-            dataKeyOptions: [],
-        }));
     }
 
     private loadKeys(assetId: string, topic: string): void {
@@ -189,7 +161,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     isLoading={this.loadingTopics}
                     prefix={'Topic:'}
                     placeholder={'Select a topic'}
-                    noOptionsMessage={'No topics found'}
+                    noOptionsMessage={'No topics available'}
                     options={topicOptions}
                     value={topicValue}
                     backspaceRemovesValue={true}
@@ -200,7 +172,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     isLoading={this.loadingDataKeys}
                     prefix={'Data Key:'}
                     placeholder={'Select a data key'}
-                    noOptionsMessage={'No data keys found'}
+                    noOptionsMessage={'No data keys available'}
                     options={dataKeyOptions}
                     value={dataKeyValue}
                     backspaceRemovesValue={true}
@@ -225,7 +197,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
         if (event.value) {
             this.loadTopics(event.value);
         }
-        // executes the query
+        // execute the query
         onRunQuery();
     };
 
@@ -242,7 +214,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
         if (event.value && query.assetId) {
             this.loadKeys(query.assetId, event.value);
         }
-        // executes the query
+        // execute the query
         onRunQuery();
     };
 
@@ -256,8 +228,42 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             ...prevState,
             dataKeyValue: event,
         }));
-        // executes the query
+        // execute the query
         onRunQuery();
     };
+
+    private resetAllValues() {
+        const {onChange, query} = this.props;
+        onChange({
+            ...query,
+            assetId: '',
+            asset: undefined,
+            topic: '',
+            dataKey: '',
+        });
+        this.setState({
+            assetValue: {},
+            assetOptions: [],
+            topicValue: {},
+            topicOptions: [],
+            dataKeyValue: {},
+            dataKeyOptions: [],
+        });
+    }
+
+    private resetTopicAndDataKeyValues() {
+        const {onChange, query} = this.props;
+        onChange({
+            ...query,
+            topic: '',
+            dataKey: '',
+        });
+        this.setState(prevState => ({
+            ...prevState,
+            topicValue: {},
+            dataKeyValue: {},
+            dataKeyOptions: [],
+        }));
+    }
 
 }

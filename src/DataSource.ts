@@ -15,7 +15,6 @@ import { HttpErrorPromise, HttpPromise } from './types/Utils';
 export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfig> {
     private readonly baseUrl: string;
     private readonly apiKey: string;
-    private environmentId = '';
 
     constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>, private backendSrv: BackendSrv) {
         super(instanceSettings);
@@ -93,13 +92,17 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             // has to be a string, since the backendSrv just calls toString() on it which results in [Object object] and an API error...
             fields: '{"id": true, "name": true}',
         };
-        this.environmentId = await this.getEnvironment().then(environment => {
-            return environment.id;
-        });
 
-        return this.doRequest('/v2/environments/' + this.environmentId + '/devices', 'GET', params).then(
-            (assetListHttpPromise: HttpPromise<AssetList>) => {
-                return assetListHttpPromise.data.data;
+        return this.getEnvironment().then(
+            environment => {
+                return this.doRequest('/v2/environments/' + environment.id + '/devices', 'GET', params).then(
+                    (assetListHttpPromise: HttpPromise<AssetList>) => {
+                        return assetListHttpPromise.data.data;
+                    },
+                    (error: HttpErrorPromise) => {
+                        throw this.generateErrorMessage(error);
+                    }
+                );
             },
             (error: HttpErrorPromise) => {
                 throw this.generateErrorMessage(error);
@@ -162,7 +165,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
 
     private generateErrorMessage(error: HttpErrorPromise) {
         if (error.status === 401) {
-            return  '401 Unauthorized - API Key provided is not valid';
+            return '401 Unauthorized - API Key provided is not valid';
         } else if (error.statusText && error.data?.message) {
             return error.status + ' ' + error.statusText + ': ' + error.data.message;
         } else {
