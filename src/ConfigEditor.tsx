@@ -45,18 +45,15 @@ export class ConfigEditor extends PureComponent<Props, State> {
                         placeholder="e.g. https://api.core.akenza.io"
                     />
                 </div>
-
-                <div className="gf-form-inline">
-                    <div className="gf-form">
-                        <FormField
-                            value={jsonData.apiKey || ''}
-                            label="API Key"
-                            placeholder="API Key"
-                            labelWidth={10}
-                            inputWidth={27}
-                            onChange={this.onAPIKeyChange}
-                        />
-                    </div>
+                <div className="gf-form">
+                    <FormField
+                        value={jsonData.apiKey || ''}
+                        label="API Key"
+                        placeholder="API Key"
+                        labelWidth={10}
+                        inputWidth={27}
+                        onChange={this.onAPIKeyChange}
+                    />
                 </div>
             </div>
         );

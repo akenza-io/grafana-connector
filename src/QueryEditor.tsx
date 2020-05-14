@@ -122,6 +122,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 <Select
                     autoFocus={true}
                     isLoading={this.loadingAssets}
+                    prefix={'Asset:'}
                     placeholder={'Select an asset'}
                     noOptionsMessage={'No assets available'}
                     options={assetSelect.options}
@@ -132,6 +133,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 <Select
                     disabled={!this.props.query.assetId}
                     isLoading={this.loadingTopics}
+                    prefix={'Topic:'}
                     placeholder={'Select a topic'}
                     noOptionsMessage={'No topics found'}
                     options={topicSelect.options}
@@ -142,6 +144,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 <Select
                     disabled={!this.props.query.topic}
                     isLoading={this.loadingDataKeys}
+                    prefix={'Data Key:'}
                     placeholder={'Select a data key'}
                     noOptionsMessage={'No data keys found'}
                     options={dataKeySelect.options}
