@@ -17,7 +17,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     constructor(props: Props) {
         super(props);
         const query = this.props.query;
-        // initialize the selects
+        // initialize the select states
         this.state = {
             assetSelect: {
                 value: query.assetId,
@@ -32,6 +32,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 options: [{label: query.dataKey, value: query.dataKey}]
             },
         }
+        this.loadAssets();
         // load topics and queries if the panel has been saved
         if (query.assetId && query.topic) {
             this.loadTopics(query.assetId);
@@ -60,7 +61,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     // initial render sometimes does not update the select, hence the force update
                     this.forceUpdate();
                 },
-                (err: any) => {
+                // in case an error is thrown, stop the loading animation
+                () => {
                     this.loadingAssets = false;
                 }
             );
@@ -84,7 +86,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     }
                 }));
             },
-            (err: any) => {
+            // in case an error is thrown, stop the loading animation
+            () => {
                 this.loadingTopics = false;
             }
         )
@@ -106,7 +109,9 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                         options: keySelectOptions,
                     }
                 }));
-            }, (err: any) => {
+            },
+            // in case an error is thrown, stop the loading animation
+            () => {
                 this.loadingDataKeys = false;
             }
         );
@@ -114,8 +119,6 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
 
     render() {
         const {assetSelect, topicSelect, dataKeySelect} = this.state;
-        // load all available assets on render
-        this.loadAssets();
 
         return (
             <div className="gf-form">
