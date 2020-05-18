@@ -1,48 +1,269 @@
-import React, { ChangeEvent, PureComponent } from 'react';
-import { LegacyForms } from '@grafana/ui';
-import { QueryEditorProps } from '@grafana/data';
+import React, { PureComponent } from 'react';
+import { Select } from '@grafana/ui';
+import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { DataSource } from './DataSource';
-import { AkenzaDataSourceConfig, AkenzaQuery } from './types';
-
-const { FormField } = LegacyForms;
+import { Asset } from './types/AkenzaTypes';
+import { AkenzaDataSourceConfig, AkenzaQuery } from './types/PluginTypes';
+import { QueryEditorState } from './types/Utils';
 
 type Props = QueryEditorProps<DataSource, AkenzaQuery, AkenzaDataSourceConfig>;
 
-export class QueryEditor extends PureComponent<Props> {
-  onQueryTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query } = this.props;
-    onChange({ ...query, queryText: event.target.value });
-  };
+export class QueryEditor extends PureComponent<Props, QueryEditorState> {
+    private loadingAssets = false;
+    private loadingTopics = false;
+    private loadingDataKeys = false;
+    private initialLoadingComplete = false;
+    private dataSourceId: number;
 
-  onConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, constant: parseFloat(event.target.value) });
-    // executes the query
-    onRunQuery();
-  };
+    constructor(props: Props) {
+        super(props);
+        this.initializeViewProperties();
+        this.dataSourceId = this.props.datasource.id;
+    }
 
-  render() {
-    const query = this.props.query;
-    const { queryText, constant } = query;
+    private initializeViewProperties() {
+        const query = this.props.query;
+        // initialize the select values and their options if the panel has been saved before, will initialize empty otherwise
+        const assetSelectValue = {
+            label: query.asset?.name || undefined,
+            value: query.assetId || null,
+            asset: query.asset
+        };
+        const topicSelectValue = {
+            label: query.topic,
+            value: query.topic || null
+        };
+        const dataKeySelectValue = {
+            label: query.dataKey,
+            value: query.dataKey || null
+        };
+        this.state = {
+            assetValue: assetSelectValue,
+            assetOptions: [assetSelectValue],
+            topicValue: topicSelectValue,
+            topicOptions: [topicSelectValue],
+            dataKeyValue: dataKeySelectValue,
+            dataKeyOptions: [dataKeySelectValue],
+        };
+        this.loadAssets();
+        // load topics and queries if the panel has been saved
+        if (query.assetId && query.topic) {
+            this.loadTopics(query.assetId);
+            this.loadKeys(query.assetId, query.topic);
+        }
+    }
 
-    return (
-      <div className="gf-form">
-        <FormField
-          width={4}
-          value={constant}
-          onChange={this.onConstantChange}
-          label="Constant"
-          type="number"
-          step="0.1"
-        />
-        <FormField
-          labelWidth={8}
-          value={queryText || ''}
-          onChange={this.onQueryTextChange}
-          label="Query Text"
-          tooltip="Not used yet"
-        />
-      </div>
-    );
-  }
+    private loadAssets(): void {
+        // render() is called multiple times, in order to avoid spam calling our API this check has been put into place
+        if (!this.loadingAssets && this.dataSourceId != this.props.datasource.id) {
+            this.loadingAssets = true;
+            if (this.dataSourceId != this.props.datasource.id && this.initialLoadingComplete) {
+                this.resetAllValues();
+                this.dataSourceId = this.props.datasource.id;
+            }
+
+            this.props.datasource.getAssets().then(
+                (assets: Asset[]) => {
+                    const assetSelectOptions: Array<SelectableValue<string>> = [];
+                    for (const asset of assets) {
+                        assetSelectOptions.push({label: asset.name, value: asset.id, asset: asset});
+                    }
+                    this.setState(prevState => ({
+                        ...prevState,
+                        assetOptions: assetSelectOptions,
+                    }));
+                    this.loadingAssets = false;
+                    this.initialLoadingComplete = true;
+                    // initial render does not update the select loading state, hence the force update
+                    // it won't trigger a re-rendering of the view, since the above checks prevent this
+                    this.forceUpdate();
+                },
+                // in case an error is thrown, stop the loading animation
+                () => {
+                    this.loadingAssets = false;
+                }
+            );
+        }
+    }
+
+    private loadTopics(assetId: string): void {
+        this.loadingTopics = true;
+        this.props.datasource.getTopics(assetId).then(
+            (topics: string[]) => {
+                let topicsSelectOptions: Array<SelectableValue<string>> = [];
+                for (const topic of topics) {
+                    topicsSelectOptions.push({label: topic, value: topic});
+                }
+                this.loadingTopics = false;
+                this.setState(prevState => ({
+                    ...prevState,
+                    topicOptions: topicsSelectOptions,
+                }));
+                if (topicsSelectOptions.length === 0) {
+                    // if no topics were found, reset dataKey and topic values options
+                    this.resetTopicAndDataKeyValues();
+                }
+            },
+            // in case an error is thrown, stop the loading animation
+            () => {
+                this.loadingTopics = false;
+            }
+        )
+    }
+
+    private loadKeys(assetId: string, topic: string): void {
+        this.loadingDataKeys = true;
+        this.props.datasource.getKeys(assetId, topic).then(
+            (keys: string[]) => {
+                let keySelectOptions: Array<SelectableValue<string>> = [];
+                for (const key of keys) {
+                    keySelectOptions.push({label: key, value: key});
+                }
+                this.loadingDataKeys = false;
+                this.setState(prevState => ({
+                    ...prevState,
+                    dataKeyOptions: keySelectOptions,
+                }));
+            },
+            // in case an error is thrown, stop the loading animation
+            () => {
+                this.loadingDataKeys = false;
+            }
+        );
+    }
+
+    render() {
+        const {
+            assetOptions,
+            assetValue,
+            dataKeyOptions,
+            dataKeyValue,
+            topicOptions,
+            topicValue,
+        } = this.state;
+        this.loadAssets();
+
+        return (
+            <div className="gf-form">
+                <Select
+                    autoFocus={true}
+                    isLoading={this.loadingAssets}
+                    prefix={'Asset:'}
+                    placeholder={'Select an asset'}
+                    noOptionsMessage={'No assets available'}
+                    options={assetOptions}
+                    value={assetValue}
+                    backspaceRemovesValue={true}
+                    onChange={this.onAssetSelectionChange}
+                />
+                <Select
+                    disabled={!this.props.query.assetId}
+                    isLoading={this.loadingTopics}
+                    prefix={'Topic:'}
+                    placeholder={'Select a topic'}
+                    noOptionsMessage={'No topics available'}
+                    options={topicOptions}
+                    value={topicValue}
+                    backspaceRemovesValue={true}
+                    onChange={this.onTopicSelectionChange}
+                />
+                <Select
+                    disabled={!this.props.query.topic}
+                    isLoading={this.loadingDataKeys}
+                    prefix={'Data Key:'}
+                    placeholder={'Select a data key'}
+                    noOptionsMessage={'No data keys available'}
+                    options={dataKeyOptions}
+                    value={dataKeyValue}
+                    backspaceRemovesValue={true}
+                    onChange={this.onKeySelectionChange}
+                />
+            </div>
+        );
+    }
+
+    onAssetSelectionChange = (event: SelectableValue<string>): void => {
+        const {onChange, query, onRunQuery} = this.props;
+        onChange({
+            ...query,
+            assetId: event.value,
+            asset: event.asset,
+        });
+        this.setState(prevState => ({
+            ...prevState,
+            assetValue: event,
+        }));
+
+        if (event.value) {
+            this.loadTopics(event.value);
+        }
+        // execute the query
+        onRunQuery();
+    };
+
+    onTopicSelectionChange = (event: SelectableValue<string>): void => {
+        const {onChange, query, onRunQuery} = this.props;
+        onChange({
+            ...query,
+            topic: event.value,
+        });
+        this.setState(prevState => ({
+            ...prevState,
+            topicValue: event,
+        }));
+        if (event.value && query.assetId) {
+            this.loadKeys(query.assetId, event.value);
+        }
+        // execute the query
+        onRunQuery();
+    };
+
+    onKeySelectionChange = (event: SelectableValue<string>): void => {
+        const {onChange, query, onRunQuery} = this.props;
+        onChange({
+            ...query,
+            dataKey: event.value,
+        });
+        this.setState(prevState => ({
+            ...prevState,
+            dataKeyValue: event,
+        }));
+        // execute the query
+        onRunQuery();
+    };
+
+    private resetAllValues() {
+        const {onChange, query} = this.props;
+        onChange({
+            ...query,
+            assetId: '',
+            asset: undefined,
+            topic: '',
+            dataKey: '',
+        });
+        this.setState({
+            assetValue: {},
+            assetOptions: [],
+            topicValue: {},
+            topicOptions: [],
+            dataKeyValue: {},
+            dataKeyOptions: [],
+        });
+    }
+
+    private resetTopicAndDataKeyValues() {
+        const {onChange, query} = this.props;
+        onChange({
+            ...query,
+            topic: '',
+            dataKey: '',
+        });
+        this.setState(prevState => ({
+            ...prevState,
+            topicValue: {},
+            dataKeyValue: {},
+            dataKeyOptions: [],
+        }));
+    }
+
 }

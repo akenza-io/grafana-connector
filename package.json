@@ -1,23 +1,25 @@
 {
-  "name": "akenza-grafana-connector",
-  "version": "1.0.0",
-  "description": "Enables the Akenza Core as Data Source",
-  "scripts": {
-    "build": "grafana-toolkit plugin:build",
-    "test": "grafana-toolkit plugin:test",
-    "dev": "grafana-toolkit plugin:dev",
-    "watch": "grafana-toolkit plugin:dev --watch"
-  },
-  "author": "David Giger",
-  "license": "Apache-2.0",
-  "devDependencies": {
-    "@grafana/data": "next",
-    "@grafana/runtime": "^6.7.3",
-    "@grafana/toolkit": "next",
-    "@grafana/ui": "next",
-    "@types/lodash": "latest"
-  },
-  "engines": {
-    "node": ">=12 <13"
-  }
+    "name": "akenza-grafana-connector",
+    "version": "1.0.0",
+    "description": "Enables the Akenza Core as Data Source",
+    "scripts": {
+        "build": "grafana-toolkit plugin:build",
+        "test": "grafana-toolkit plugin:test",
+        "dev": "grafana-toolkit plugin:dev",
+        "watch": "grafana-toolkit plugin:dev --watch"
+    },
+    "author": "David Giger",
+    "license": "Apache-2.0",
+    "devDependencies": {
+        "@grafana/data": "next",
+        "@grafana/runtime": "^6.7.3",
+        "@grafana/toolkit": "next",
+        "@grafana/ui": "next",
+        "@types/lodash": "latest",
+        "build-url": "^2.0.0"
+    },
+    "engines": {
+        "node": ">=12 <13"
+    },
+    "dependencies": {}
 }
