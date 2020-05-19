@@ -5,6 +5,7 @@ import {
     DataSourceInstanceSettings, DateTime,
     FieldType,
     MutableDataFrame,
+    dateTime
 } from '@grafana/data';
 import { BackendSrv, BackendSrvRequest } from '@grafana/runtime';
 import buildUrl from 'build-url';
@@ -52,7 +53,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                     // first entry in the array is always the value
                     data.push(dataPoint[0]);
                     // converts the ISO String to unix timestamp
-                    time.push(new Date(dataPoint[1]).valueOf());
+                    time.push(dateTime(dataPoint[1]).valueOf());
                 }
                 panelData.push(new MutableDataFrame({
                     refId: target.refId,
