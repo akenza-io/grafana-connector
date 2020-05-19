@@ -4,7 +4,6 @@ services:
   grafana:
     image: grafana/grafana:7.0.0-beta3
     container_name: 'grafana-connector-grafana'
-    network_mode: "host"
     volumes:
       - ./dist:/var/lib/grafana/plugins
     env_file:
