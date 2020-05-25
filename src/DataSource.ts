@@ -2,10 +2,11 @@ import {
     DataQueryRequest,
     DataQueryResponse,
     DataSourceApi,
-    DataSourceInstanceSettings, DateTime,
+    DataSourceInstanceSettings,
+    DateTime,
     FieldType,
     MutableDataFrame,
-    dateTime
+    dateTime,
 } from '@grafana/data';
 import { BackendSrv, BackendSrvRequest } from '@grafana/runtime';
 import buildUrl from 'build-url';
@@ -55,17 +56,19 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                     // converts the ISO String to unix timestamp
                     time.push(dateTime(dataPoint[1]).valueOf());
                 }
-                panelData.push(new MutableDataFrame({
-                    refId: target.refId,
-                    fields: [
-                        {name: 'Time', values: time, type: FieldType.time},
-                        {name: target.asset?.name + ' - ' + target.dataKey, values: data, type: FieldType.number},
-                    ],
-                }));
+                panelData.push(
+                    new MutableDataFrame({
+                        refId: target.refId,
+                        fields: [
+                            { name: 'Time', values: time, type: FieldType.time },
+                            { name: target.asset?.name + ' - ' + target.dataKey, values: data, type: FieldType.number },
+                        ],
+                    })
+                );
             }
         }
 
-        return {data: panelData};
+        return { data: panelData };
     }
 
     async getTimeSeriesData(query: AkenzaQuery, from: string, to: string): Promise<TimeSeriesData> {
@@ -81,7 +84,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         return this.doRequest('/v3/assets/' + query.assetId + '/query/time-series', 'POST', null, body).then(
             (timeSeriesData: HttpPromise<TimeSeriesData>) => {
                 return timeSeriesData.data;
-            }, (error: HttpErrorPromise) => {
+            },
+            (error: HttpErrorPromise) => {
                 throw this.generateErrorMessage(error);
             }
         );
@@ -117,8 +121,9 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                 return topics.data;
             },
             (error: HttpErrorPromise) => {
-                throw this.generateErrorMessage(error)
-            });
+                throw this.generateErrorMessage(error);
+            }
+        );
     }
 
     async getKeys(assetId: string, topic: string): Promise<string[]> {
@@ -136,7 +141,8 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             },
             (error: HttpErrorPromise) => {
                 throw this.generateErrorMessage(error);
-            });
+            }
+        );
     }
 
     private async getEnvironment(): Promise<Environment> {
@@ -152,7 +158,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
 
     private doRequest(path: string, method: string, params?: any, data?: any) {
         const options: BackendSrvRequest = {
-            url: buildUrl(this.baseUrl, {path}),
+            url: buildUrl(this.baseUrl, { path }),
             method,
             params,
             data,
