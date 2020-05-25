@@ -1,7 +1,7 @@
 {
     "type": "datasource",
     "name": "Akenza Core Connector",
-    "id": "akenza-iotcore-datasource",
+    "id": "akenza-core-datasource",
     "metrics": true,
     "info": {
         "description": "Enables the Akenza Core as Data Source",
