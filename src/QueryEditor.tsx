@@ -27,15 +27,15 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
         const assetSelectValue = {
             label: query.asset?.name || undefined,
             value: query.assetId || null,
-            asset: query.asset
+            asset: query.asset,
         };
         const topicSelectValue = {
             label: query.topic,
-            value: query.topic || null
+            value: query.topic || null,
         };
         const dataKeySelectValue = {
             label: query.dataKey,
-            value: query.dataKey || null
+            value: query.dataKey || null,
         };
         this.state = {
             assetValue: assetSelectValue,
@@ -55,9 +55,9 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
 
     private loadAssets(): void {
         // render() is called multiple times, in order to avoid spam calling our API this check has been put into place
-        if (!this.loadingAssets && this.dataSourceId != this.props.datasource.id) {
+        if (!this.loadingAssets && this.dataSourceId !== this.props.datasource.id) {
             this.loadingAssets = true;
-            if (this.dataSourceId != this.props.datasource.id && this.initialLoadingComplete) {
+            if (this.dataSourceId !== this.props.datasource.id && this.initialLoadingComplete) {
                 this.resetAllValues();
                 this.dataSourceId = this.props.datasource.id;
             }
@@ -66,7 +66,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 (assets: Asset[]) => {
                     const assetSelectOptions: Array<SelectableValue<string>> = [];
                     for (const asset of assets) {
-                        assetSelectOptions.push({label: asset.name, value: asset.id, asset: asset});
+                        assetSelectOptions.push({ label: asset.name, value: asset.id, asset: asset });
                     }
                     this.setState(prevState => ({
                         ...prevState,
@@ -92,7 +92,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             (topics: string[]) => {
                 let topicsSelectOptions: Array<SelectableValue<string>> = [];
                 for (const topic of topics) {
-                    topicsSelectOptions.push({label: topic, value: topic});
+                    topicsSelectOptions.push({ label: topic, value: topic });
                 }
                 this.loadingTopics = false;
                 this.setState(prevState => ({
@@ -108,7 +108,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             () => {
                 this.loadingTopics = false;
             }
-        )
+        );
     }
 
     private loadKeys(assetId: string, topic: string): void {
@@ -117,7 +117,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             (keys: string[]) => {
                 let keySelectOptions: Array<SelectableValue<string>> = [];
                 for (const key of keys) {
-                    keySelectOptions.push({label: key, value: key});
+                    keySelectOptions.push({ label: key, value: key });
                 }
                 this.loadingDataKeys = false;
                 this.setState(prevState => ({
@@ -133,14 +133,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     }
 
     render() {
-        const {
-            assetOptions,
-            assetValue,
-            dataKeyOptions,
-            dataKeyValue,
-            topicOptions,
-            topicValue,
-        } = this.state;
+        const { assetOptions, assetValue, dataKeyOptions, dataKeyValue, topicOptions, topicValue } = this.state;
         this.loadAssets();
 
         return (
@@ -183,7 +176,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     }
 
     onAssetSelectionChange = (event: SelectableValue<string>): void => {
-        const {onChange, query, onRunQuery} = this.props;
+        const { onChange, query, onRunQuery } = this.props;
         onChange({
             ...query,
             assetId: event.value,
@@ -202,7 +195,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     };
 
     onTopicSelectionChange = (event: SelectableValue<string>): void => {
-        const {onChange, query, onRunQuery} = this.props;
+        const { onChange, query, onRunQuery } = this.props;
         onChange({
             ...query,
             topic: event.value,
@@ -219,7 +212,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     };
 
     onKeySelectionChange = (event: SelectableValue<string>): void => {
-        const {onChange, query, onRunQuery} = this.props;
+        const { onChange, query, onRunQuery } = this.props;
         onChange({
             ...query,
             dataKey: event.value,
@@ -233,7 +226,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     };
 
     private resetAllValues() {
-        const {onChange, query} = this.props;
+        const { onChange, query } = this.props;
         onChange({
             ...query,
             assetId: '',
@@ -252,7 +245,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     }
 
     private resetTopicAndDataKeyValues() {
-        const {onChange, query} = this.props;
+        const { onChange, query } = this.props;
         onChange({
             ...query,
             topic: '',
@@ -265,5 +258,4 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             dataKeyOptions: [],
         }));
     }
-
 }

@@ -3,7 +3,7 @@ import { LegacyForms } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import { AkenzaDataSourceConfig } from './types/PluginTypes';
 
-const {FormField} = LegacyForms;
+const { FormField } = LegacyForms;
 
 interface Props extends DataSourcePluginOptionsEditorProps<AkenzaDataSourceConfig> {}
 
@@ -11,27 +11,27 @@ interface State {}
 
 export class ConfigEditor extends PureComponent<Props, State> {
     onBaseUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const {onOptionsChange, options} = this.props;
+        const { onOptionsChange, options } = this.props;
         const jsonData = {
             ...options.jsonData,
             baseUrl: event.target.value,
         };
-        onOptionsChange({...options, jsonData});
+        onOptionsChange({ ...options, jsonData });
     };
 
     // Secure field (only sent to the backend)
     onAPIKeyChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const {onOptionsChange, options} = this.props;
+        const { onOptionsChange, options } = this.props;
         const jsonData = {
             ...options.jsonData,
             apiKey: event.target.value,
         };
-        onOptionsChange({...options, jsonData});
+        onOptionsChange({ ...options, jsonData });
     };
 
     render() {
-        const {options} = this.props;
-        const {jsonData} = options;
+        const { options } = this.props;
+        const { jsonData } = options;
 
         return (
             <div className="gf-form-group">

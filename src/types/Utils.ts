@@ -27,8 +27,8 @@ export interface AkenzaErrorMessage {
 export interface QueryEditorState {
     assetValue?: SelectableValue;
     assetOptions: SelectableValue[];
-    topicValue?: SelectableValue,
-    topicOptions: SelectableValue[]
-    dataKeyValue?: SelectableValue,
-    dataKeyOptions: SelectableValue[]
+    topicValue?: SelectableValue;
+    topicOptions: SelectableValue[];
+    dataKeyValue?: SelectableValue;
+    dataKeyOptions: SelectableValue[];
 }
