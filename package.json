@@ -10,16 +10,15 @@
     },
     "author": "David Giger",
     "license": "Apache-2.0",
-    "devDependencies": {
-        "@grafana/data": "next",
-        "@grafana/runtime": "^6.7.3",
-        "@grafana/toolkit": "next",
-        "@grafana/ui": "next",
-        "@types/lodash": "latest",
+    "dependencies": {
+        "@grafana/data": "^7.0.0",
+        "@grafana/runtime": "^7.0.0",
+        "@grafana/toolkit": "^7.0.0",
+        "@grafana/ui": "^7.0.0",
+        "@types/lodash": "^4.14.152",
         "build-url": "^2.0.0"
     },
     "engines": {
         "node": ">=12 <13"
-    },
-    "dependencies": {}
+    }
 }
