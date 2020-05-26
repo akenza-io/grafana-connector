@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   grafana:
-    image: grafana/grafana:7.0.0-beta3
+    image: grafana/grafana:7.0.0
     container_name: 'grafana-connector-grafana'
     volumes:
       - ./dist:/var/lib/grafana/plugins

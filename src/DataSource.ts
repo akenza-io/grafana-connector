@@ -8,7 +8,7 @@ import {
     MutableDataFrame,
     dateTime,
 } from '@grafana/data';
-import { BackendSrv, BackendSrvRequest } from '@grafana/runtime';
+import { BackendSrvRequest, getBackendSrv } from '@grafana/runtime';
 import buildUrl from 'build-url';
 import { Asset, AssetData, AssetList, Environment, EnvironmentList, TimeSeriesData } from './types/AkenzaTypes';
 import { AkenzaDataSourceConfig, AkenzaQuery } from './types/PluginTypes';
@@ -18,7 +18,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
     private readonly baseUrl: string;
     private readonly apiKey: string;
 
-    constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>, private backendSrv: BackendSrv) {
+    constructor(instanceSettings: DataSourceInstanceSettings<AkenzaDataSourceConfig>) {
         super(instanceSettings);
         this.baseUrl = instanceSettings.jsonData.baseUrl;
         this.apiKey = instanceSettings.jsonData.apiKey;
@@ -167,7 +167,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             },
         };
 
-        return this.backendSrv.datasourceRequest(options);
+        return getBackendSrv().datasourceRequest(options);
     }
 
     private generateErrorMessage(error: HttpErrorPromise) {
