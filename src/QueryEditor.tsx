@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Select } from '@grafana/ui';
+import { HorizontalGroup } from '@grafana/ui';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { DataSource } from './DataSource';
 import { Asset } from './types/AkenzaTypes';
@@ -138,39 +139,53 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
 
         return (
             <div className="gf-form">
-                <Select
-                    autoFocus={true}
-                    isLoading={this.loadingAssets}
-                    prefix={'Asset:'}
-                    placeholder={'Select an asset'}
-                    noOptionsMessage={'No assets available'}
-                    options={assetOptions}
-                    value={assetValue}
-                    backspaceRemovesValue={true}
-                    onChange={this.onAssetSelectionChange}
-                />
-                <Select
-                    disabled={!this.props.query.assetId}
-                    isLoading={this.loadingTopics}
-                    prefix={'Topic:'}
-                    placeholder={'Select a topic'}
-                    noOptionsMessage={'No topics available'}
-                    options={topicOptions}
-                    value={topicValue}
-                    backspaceRemovesValue={true}
-                    onChange={this.onTopicSelectionChange}
-                />
-                <Select
-                    disabled={!this.props.query.topic}
-                    isLoading={this.loadingDataKeys}
-                    prefix={'Data Key:'}
-                    placeholder={'Select a data key'}
-                    noOptionsMessage={'No data keys available'}
-                    options={dataKeyOptions}
-                    value={dataKeyValue}
-                    backspaceRemovesValue={true}
-                    onChange={this.onKeySelectionChange}
-                />
+                <HorizontalGroup spacing={"md"} wrap={true}>
+                    <HorizontalGroup spacing={"none"}>
+                        <div className="gf-form-label">Asset:</div>
+                        <Select
+                            menuPlacement={"bottom"}
+                            autoFocus={true}
+                            isLoading={this.loadingAssets}
+                            placeholder={'Select an asset'}
+                            noOptionsMessage={'No assets available'}
+                            options={assetOptions}
+                            value={assetValue}
+                            backspaceRemovesValue={true}
+                            onChange={this.onAssetSelectionChange}
+                            width={48}
+                        />
+                    </HorizontalGroup>
+                    <HorizontalGroup spacing={"none"}>
+                        <div className="gf-form-label">Topic:</div>
+                        <Select
+                            menuPlacement={"bottom"}
+                            disabled={!this.props.query.assetId}
+                            isLoading={this.loadingTopics}
+                            placeholder={'Select a topic'}
+                            noOptionsMessage={'No topics available'}
+                            options={topicOptions}
+                            value={topicValue}
+                            backspaceRemovesValue={true}
+                            onChange={this.onTopicSelectionChange}
+                            width={24}
+                        />
+                    </HorizontalGroup>
+                    <HorizontalGroup spacing={"none"}>
+                        <div className="gf-form-label">Data Key:</div>
+                        <Select
+                            menuPlacement={"bottom"}
+                            disabled={!this.props.query.topic}
+                            isLoading={this.loadingDataKeys}
+                            placeholder={'Select a data key'}
+                            noOptionsMessage={'No data keys available'}
+                            options={dataKeyOptions}
+                            value={dataKeyValue}
+                            backspaceRemovesValue={true}
+                            onChange={this.onKeySelectionChange}
+                            width={24}
+                        />
+                    </HorizontalGroup>
+                </HorizontalGroup>
             </div>
         );
     }
