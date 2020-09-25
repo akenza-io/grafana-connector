@@ -139,11 +139,11 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
 
         return (
             <div className="gf-form">
-                <HorizontalGroup spacing={"md"} wrap={true}>
-                    <HorizontalGroup spacing={"none"}>
+                <HorizontalGroup spacing={'md'} wrap={true}>
+                    <HorizontalGroup spacing={'none'}>
                         <div className="gf-form-label">Asset:</div>
                         <Select
-                            menuPlacement={"bottom"}
+                            menuPlacement={'bottom'}
                             autoFocus={true}
                             isLoading={this.loadingAssets}
                             placeholder={'Select an asset'}
@@ -155,10 +155,10 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                             width={48}
                         />
                     </HorizontalGroup>
-                    <HorizontalGroup spacing={"none"}>
+                    <HorizontalGroup spacing={'none'}>
                         <div className="gf-form-label">Topic:</div>
                         <Select
-                            menuPlacement={"bottom"}
+                            menuPlacement={'bottom'}
                             disabled={!this.props.query.assetId}
                             isLoading={this.loadingTopics}
                             placeholder={'Select a topic'}
@@ -170,10 +170,10 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                             width={24}
                         />
                     </HorizontalGroup>
-                    <HorizontalGroup spacing={"none"}>
+                    <HorizontalGroup spacing={'none'}>
                         <div className="gf-form-label">Data Key:</div>
                         <Select
-                            menuPlacement={"bottom"}
+                            menuPlacement={'bottom'}
                             disabled={!this.props.query.topic}
                             isLoading={this.loadingDataKeys}
                             placeholder={'Select a data key'}
