@@ -93,7 +93,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
 
     async getAssets(): Promise<Asset[]> {
         const params = {
-            unpaged: true,
+            limit: 1000,
             // has to be a string, since the backendSrv just calls toString() on it which results in [Object object] and an API error...
             fields: '{"id": true, "name": true}',
         };
