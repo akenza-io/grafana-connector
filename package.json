@@ -6,7 +6,8 @@
         "build": "grafana-toolkit plugin:build",
         "test": "grafana-toolkit plugin:test",
         "dev": "grafana-toolkit plugin:dev",
-        "watch": "grafana-toolkit plugin:dev --watch"
+        "watch": "grafana-toolkit plugin:dev --watch",
+        "deploy": "yarn build && rm -rf ./tmp && mkdir -p ./tmp/akenza-grafana-connector && cp -R ./dist/ ./tmp/akenza-grafana-connector/ && cd tmp && zip ./akenza-grafana-connector.zip -r ./akenza-grafana-connector/ && cd .. && rm -Rf ./tmp/akenza-grafana-connector"
     },
     "author": "David Giger",
     "license": "Apache-2.0",
@@ -19,6 +20,6 @@
         "build-url": "^2.0.0"
     },
     "engines": {
-        "node": ">=12 <13"
+        "node": ">=12 <16"
     }
 }
