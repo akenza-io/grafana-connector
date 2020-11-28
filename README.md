@@ -25,3 +25,10 @@ The Grafana server will be started and can be accessed at [localhost:3000](). Th
 - [Grafana documentation](https://grafana.com/docs/)
 - [Grafana Tutorials](https://grafana.com/tutorials/) - Grafana Tutorials are step-by-step guides that help you make the most of Grafana
 - [Grafana UI Library](https://developers.grafana.com/ui) - UI components to help you build interfaces using Grafana Design System
+
+
+docker run -d \
+-p 3000:3000 \
+--name=grafana \
+-e 'GF_INSTALL_PLUGINS=https://github.com/akenza-io/grafana-connector/releases/download/v1.0.6/akenza-core-datasource-1.0.6.zip;akenza-core-datasource' \
+grafana/grafana:7.3.2
