@@ -81,7 +81,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             },
         };
 
-        return this.doRequest('/v3/assets/' + query.assetId + '/query/time-series', 'POST', null, body).then(
+        return this.doRequest('/v2/assets/' + query.assetId + '/query/time-series', 'POST', null, body).then(
             (timeSeriesData: HttpPromise<TimeSeriesData>) => {
                 return timeSeriesData.data;
             },
@@ -116,7 +116,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
     }
 
     async getTopics(assetId: string): Promise<string[]> {
-        return this.doRequest('/v3/assets/' + assetId + '/query/topics', 'GET').then(
+        return this.doRequest('/v2/assets/' + assetId + '/query/topics', 'GET').then(
             (topics: HttpPromise<string[]>) => {
                 return topics.data;
             },
@@ -133,7 +133,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             skip: 0,
         };
 
-        return this.doRequest('/v3/assets/' + assetId + '/query', 'POST', null, queryOptions).then(
+        return this.doRequest('/v2/assets/' + assetId + '/query', 'POST', null, queryOptions).then(
             (res: HttpPromise<AssetData[]>) => {
                 const keys: string[] = [];
                 Object.keys(res.data[0].data).forEach(key => keys.push(key));
