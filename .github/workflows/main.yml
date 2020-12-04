@@ -20,13 +20,23 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Get tag version
+        id: get_tag_version
+        run: echo ::set-output name=TAG_VERSION::$(echo ${GITHUB_REF##*/} | sed 's/[a-z-]//g')
+      
+      - name: Set package version
+        run: yarn version --new-version ${{ steps.get_tag_version.outputs.TAG_VERSION }} --no-git-tag-version
+
+      - name: Set readme version
+        run: sed -i "s/{VERSION}/${{ steps.get_tag_version.outputs.TAG_VERSION }}/g" README.md && cat README.md 
+
       - name: Build plugin
         run: yarn build
 
-#      - name: Sign plugin
-#        run: npx @grafana/toolkit@canary plugin:sign
-#        env:
-#          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }} # Requires a Grafana API key from Grafana.com.
+      # - name: Sign plugin
+      #   run: npx @grafana/toolkit@canary plugin:sign
+      #   env:
+      #     GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }} # Requires a Grafana API key from Grafana.com.
 
       - name: Get plugin information
         run: |
@@ -88,8 +98,8 @@ jobs:
         run: |
           echo "GRAFANA_PLUGIN_CHECKSUM=$(cat ./${{ env.GRAFANA_PLUGIN_ARTIFACT_CHECKSUM }} | cut -d' ' -f1)" >> $GITHUB_ENV
 
-#      - name: Publish to Grafana.com
-#        run: |
-#          echo Publish your plugin to grafana.com/plugins by opening a PR to https://github.com/grafana/grafana-plugin-repository with the following entry:
-#          echo
-#          echo '{ "id": "${{ env.GRAFANA_PLUGIN_ID }}", "type": "${{ env.GRAFANA_PLUGIN_TYPE }}", "url": "https://github.com/${{ github.repository }}", "versions": [ { "version": "${{ env.GRAFANA_PLUGIN_VERSION }}", "commit": "${{ github.sha }}", "url": "https://github.com/${{ github.repository }}", "download": { "any": { "url": "${{ steps.upload-plugin-asset.outputs.browser_download_url }}", "md5": "${{ env.GRAFANA_PLUGIN_CHECKSUM }}" } } } ] }' | jq .
+      # - name: Publish to Grafana.com
+      #   run: |
+      #     echo Publish your plugin to grafana.com/plugins by opening a PR to https://github.com/grafana/grafana-plugin-repository with the following entry:
+      #     echo
+      #     echo '{ "id": "${{ env.GRAFANA_PLUGIN_ID }}", "type": "${{ env.GRAFANA_PLUGIN_TYPE }}", "url": "https://github.com/${{ github.repository }}", "versions": [ { "version": "${{ env.GRAFANA_PLUGIN_VERSION }}", "commit": "${{ github.sha }}", "url": "https://github.com/${{ github.repository }}", "download": { "any": { "url": "${{ steps.upload-plugin-asset.outputs.browser_download_url }}", "md5": "${{ env.GRAFANA_PLUGIN_CHECKSUM }}" } } } ] }' | jq .
