@@ -1,6 +1,6 @@
 {
     "name": "akenza-grafana-connector",
-    "version": "1.0.6",
+    "version": "0.0.0",
     "description": "Enables the Akenza Core as Data Source",
     "scripts": {
         "build": "grafana-toolkit plugin:build",
