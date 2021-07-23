@@ -1,9 +1,9 @@
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
-import { Asset } from './AkenzaTypes';
+import { Device } from './AkenzaTypes';
 
 export interface AkenzaQuery extends DataQuery {
-    assetId?: string;
-    asset?: Asset;
+    deviceId?: string;
+    device?: Device;
     topic?: string;
     dataKey?: string;
 }
