@@ -104,7 +104,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         };
 
         return this.getEnvironment().then(
-            environment => {
+            (environment) => {
                 return this.doRequest('/v2/environments/' + environment.id + '/devices', 'GET', params).then(
                     (assetListHttpPromise: HttpPromise<DeviceList>) => {
                         return assetListHttpPromise.data.data;
@@ -141,7 +141,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         return this.doRequest('/v2/assets/' + assetId + '/query', 'POST', null, queryOptions).then(
             (res: HttpPromise<DeviceData[]>) => {
                 const keys: string[] = [];
-                Object.keys(res.data[0].data).forEach(key => keys.push(key));
+                Object.keys(res.data[0].data).forEach((key) => keys.push(key));
                 return keys;
             },
             (error: HttpErrorPromise) => {

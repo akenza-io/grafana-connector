@@ -58,7 +58,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             // wait for 250ms after the user has finished typing
             .pipe(debounceTime(250), distinctUntilChanged())
             // subscribe and update the device options
-            .subscribe(searchString => {
+            .subscribe((searchString) => {
                 this.queryDevicesAndAssembleSelectionOptions(searchString, true);
             });
     }
@@ -105,7 +105,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                     deviceSelectOptions.push({ label: device.name, value: device.id, device });
                 }
                 // modify the state
-                this.setState(prevState => ({
+                this.setState((prevState) => ({
                     ...prevState,
                     deviceOptions: deviceSelectOptions,
                 }));
@@ -156,7 +156,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 }
                 // reset the values only after initial loading was completed, will reset it again otherwise due to react lifecycles
                 if (this.initialLoadingComplete) {
-                    this.setState(prevState => ({
+                    this.setState((prevState) => ({
                         ...prevState,
                         dataKeyOptions: keySelectOptions,
                         dataKeyValue: {},
@@ -260,7 +260,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 device: deviceSelection?.device,
             });
             // modify the state
-            this.setState(prevState => ({
+            this.setState((prevState) => ({
                 ...prevState,
                 deviceValue: deviceSelection,
             }));
@@ -283,7 +283,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 topic: topicSelection.value,
             });
             // modify the state
-            this.setState(prevState => ({
+            this.setState((prevState) => ({
                 ...prevState,
                 topicValue: topicSelection,
             }));
@@ -306,7 +306,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 dataKey: dataKeySelection.value,
             });
             // modify the state
-            this.setState(prevState => ({
+            this.setState((prevState) => ({
                 ...prevState,
                 dataKeyValue: dataKeySelection,
             }));
@@ -345,7 +345,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             dataKey: '',
         });
 
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             ...prevState,
             topicValue: {},
             topicOptions: topicsOptions,
@@ -355,21 +355,21 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     }
 
     private setLoadingDevicesState(isLoading: boolean) {
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             ...prevState,
             loadingDevices: isLoading,
         }));
     }
 
     private setLoadingTopicsState(isLoading: boolean) {
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             ...prevState,
             loadingTopics: isLoading,
         }));
     }
 
     private setLoadingDataKeysState(isLoading: boolean) {
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             ...prevState,
             loadingDataKeys: isLoading,
         }));
