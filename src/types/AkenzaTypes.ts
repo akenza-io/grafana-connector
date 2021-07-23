@@ -1,17 +1,17 @@
-export interface Asset {
+export interface Device {
     id: string;
     name: string;
     // no other properties since the API call is made using the fields param
 }
 
-export interface AssetList {
+export interface DeviceList {
     offset: number;
     limit: number;
     total: number;
-    data: Asset[];
+    data: Device[];
 }
 
-export interface AssetData {
+export interface DeviceData {
     deviceId: string;
     timestamp: string;
     topic: string;

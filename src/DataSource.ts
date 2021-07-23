@@ -10,7 +10,7 @@ import {
 } from '@grafana/data';
 import { BackendSrvRequest, getBackendSrv } from '@grafana/runtime';
 import buildUrl from 'build-url';
-import { Asset, AssetData, AssetList, Environment, EnvironmentList, TimeSeriesData } from './types/AkenzaTypes';
+import { DeviceData, DeviceList, Device, Environment, EnvironmentList, TimeSeriesData } from './types/AkenzaTypes';
 import { AkenzaDataSourceConfig, AkenzaQuery } from './types/PluginTypes';
 import { HttpErrorPromise, HttpPromise } from './types/Utils';
 
@@ -46,7 +46,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         const to: DateTime = options.range.to;
         const panelData: MutableDataFrame[] = [];
         for (let target of options.targets) {
-            if (target.assetId && target.topic && target.dataKey && !target.hide) {
+            if (target.deviceId && target.topic && target.dataKey && !target.hide) {
                 const timeSeriesData = await this.getTimeSeriesData(target, from.toISOString(), to.toISOString());
                 const data: number[] = [];
                 const time: number[] = [];
@@ -61,7 +61,11 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                         refId: target.refId,
                         fields: [
                             { name: 'Time', values: time, type: FieldType.time },
-                            { name: target.asset?.name + ' - ' + target.dataKey, values: data, type: FieldType.number },
+                            {
+                                name: target.device?.name + ' - ' + target.dataKey,
+                                values: data,
+                                type: FieldType.number,
+                            },
                         ],
                     })
                 );
@@ -81,7 +85,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             },
         };
 
-        return this.doRequest('/v2/assets/' + query.assetId + '/query/time-series', 'POST', null, body).then(
+        return this.doRequest('/v2/assets/' + query.deviceId + '/query/time-series', 'POST', null, body).then(
             (timeSeriesData: HttpPromise<TimeSeriesData>) => {
                 return timeSeriesData.data;
             },
@@ -91,17 +95,18 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         );
     }
 
-    async getAssets(): Promise<Asset[]> {
+    async getAssets(searchString?: string): Promise<Device[]> {
         const params = {
-            limit: 1000,
+            limit: 25,
             // has to be a string, since the backendSrv just calls toString() on it which results in [Object object] and an API error...
             fields: '{"id": true, "name": true}',
+            search: searchString,
         };
 
         return this.getEnvironment().then(
             environment => {
                 return this.doRequest('/v2/environments/' + environment.id + '/devices', 'GET', params).then(
-                    (assetListHttpPromise: HttpPromise<AssetList>) => {
+                    (assetListHttpPromise: HttpPromise<DeviceList>) => {
                         return assetListHttpPromise.data.data;
                     },
                     (error: HttpErrorPromise) => {
@@ -134,7 +139,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         };
 
         return this.doRequest('/v2/assets/' + assetId + '/query', 'POST', null, queryOptions).then(
-            (res: HttpPromise<AssetData[]>) => {
+            (res: HttpPromise<DeviceData[]>) => {
                 const keys: string[] = [];
                 Object.keys(res.data[0].data).forEach(key => keys.push(key));
                 return keys;
