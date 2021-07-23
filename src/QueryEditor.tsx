@@ -22,10 +22,10 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
         super(props);
         const query = this.props.query;
         // initialize the select values and their options if the panel has been saved before, will initialize empty otherwise
-        const deviceSelectValue = {
-            label: query.device?.name || undefined,
-            value: query.deviceId || null,
-            device: query.device,
+        const assetSelectValue = {
+            label: query.asset?.name || undefined,
+            value: query.assetId || null,
+            device: query.asset,
         };
         const topicSelectValue = {
             label: query.topic,
@@ -37,8 +37,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
         };
         // initialize the state
         this.state = {
-            deviceValue: deviceSelectValue,
-            deviceOptions: [deviceSelectValue],
+            assetValue: assetSelectValue,
+            assetOptions: [assetSelectValue],
             topicValue: topicSelectValue,
             topicOptions: [topicSelectValue],
             dataKeyValue: dataKeySelectValue,
@@ -73,10 +73,10 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             }
             // load the device list
             this.queryDevicesAndAssembleSelectionOptions(undefined, false, () => {
-                if (query.deviceId && query.topic) {
+                if (query.assetId && query.topic) {
                     // query contains values if the panel was saved at some point, meaning the topic and data key selection should be loaded as well
-                    this.loadTopicsAndAssembleSelectionOptions(query.deviceId!, () => {
-                        this.loadDataKeysAndAssembleSelectionOptions(query.deviceId!, query.topic!, () => {
+                    this.loadTopicsAndAssembleSelectionOptions(query.assetId!, () => {
+                        this.loadDataKeysAndAssembleSelectionOptions(query.assetId!, query.topic!, () => {
                             // set the initial loading state once everything has been loaded
                             this.initialLoadingComplete = true;
                         });
@@ -107,7 +107,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 // modify the state
                 this.setState((prevState) => ({
                     ...prevState,
-                    deviceOptions: deviceSelectOptions,
+                    assetOptions: deviceSelectOptions,
                 }));
                 // execute the callback if set
                 if (callback) {
@@ -179,8 +179,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
             loadingDevices,
             loadingTopics,
             loadingDataKeys,
-            deviceOptions,
-            deviceValue,
+            assetOptions,
+            assetValue,
             dataKeyOptions,
             dataKeyValue,
             topicOptions,
@@ -198,8 +198,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                             isLoading={loadingDevices}
                             placeholder={'Select a device'}
                             noOptionsMessage={'No devices available'}
-                            options={deviceOptions}
-                            value={deviceValue}
+                            options={assetOptions}
+                            value={assetValue}
                             onChange={this.onDeviceSelectionChange}
                             width={48}
                             onInputChange={this.onDeviceInputChange}
@@ -209,7 +209,7 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                         <div className="gf-form-label">Topic:</div>
                         <Select
                             menuPlacement={'bottom'}
-                            disabled={!query.deviceId}
+                            disabled={!query.assetId}
                             isLoading={loadingTopics}
                             placeholder={'Select a topic'}
                             noOptionsMessage={'No topics available'}
@@ -252,17 +252,17 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
     onDeviceSelectionChange = (deviceSelection: SelectableValue<string>): void => {
         const { onChange, query, onRunQuery } = this.props;
         // check if the same value was selected again (no need to re-trigger any updates in this case)
-        if (deviceSelection?.value !== query.deviceId) {
+        if (deviceSelection?.value !== query.assetId) {
             // modify the query
             onChange({
                 ...query,
-                deviceId: deviceSelection?.value,
-                device: deviceSelection?.device,
+                assetId: deviceSelection?.value,
+                asset: deviceSelection?.device,
             });
             // modify the state
             this.setState((prevState) => ({
                 ...prevState,
-                deviceValue: deviceSelection,
+                assetValue: deviceSelection,
             }));
             // load the topics if the event contains a device id
             if (deviceSelection?.value) {
@@ -288,8 +288,8 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
                 topicValue: topicSelection,
             }));
             // load data keys if the topic and the deviceId are present
-            if (topicSelection.value && query.deviceId) {
-                this.loadDataKeysAndAssembleSelectionOptions(query.deviceId, topicSelection.value);
+            if (topicSelection.value && query.assetId) {
+                this.loadDataKeysAndAssembleSelectionOptions(query.assetId, topicSelection.value);
             }
             // execute the query
             onRunQuery();
@@ -320,15 +320,15 @@ export class QueryEditor extends PureComponent<Props, QueryEditorState> {
         // modify the query
         onChange({
             ...query,
-            deviceId: '',
-            device: undefined,
+            assetId: '',
+            asset: undefined,
             topic: '',
             dataKey: '',
         });
         // reset the state
         this.setState({
-            deviceValue: {},
-            deviceOptions: [],
+            assetValue: {},
+            assetOptions: [],
             topicValue: {},
             topicOptions: [],
             dataKeyValue: {},

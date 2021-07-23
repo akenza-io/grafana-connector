@@ -46,7 +46,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
         const to: DateTime = options.range.to;
         const panelData: MutableDataFrame[] = [];
         for (let target of options.targets) {
-            if (target.deviceId && target.topic && target.dataKey && !target.hide) {
+            if (target.assetId && target.topic && target.dataKey && !target.hide) {
                 const timeSeriesData = await this.getTimeSeriesData(target, from.toISOString(), to.toISOString());
                 const data: number[] = [];
                 const time: number[] = [];
@@ -62,7 +62,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
                         fields: [
                             { name: 'Time', values: time, type: FieldType.time },
                             {
-                                name: target.device?.name + ' - ' + target.dataKey,
+                                name: target.asset?.name + ' - ' + target.dataKey,
                                 values: data,
                                 type: FieldType.number,
                             },
@@ -85,7 +85,7 @@ export class DataSource extends DataSourceApi<AkenzaQuery, AkenzaDataSourceConfi
             },
         };
 
-        return this.doRequest('/v2/assets/' + query.deviceId + '/query/time-series', 'POST', null, body).then(
+        return this.doRequest('/v2/assets/' + query.assetId + '/query/time-series', 'POST', null, body).then(
             (timeSeriesData: HttpPromise<TimeSeriesData>) => {
                 return timeSeriesData.data;
             },
