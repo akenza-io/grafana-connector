@@ -1,4 +1,6 @@
-# Akenza Core Grafana Connector
+# Akenza Core Grafana Connector [deprecated]
+
+**[Deprecation Notice]**: This plugin is built for Akenza Core and is deprecated. For the new version of akenza use the [akenza connector](https://github.com/akenza-io/grafana-connector-v3).
 
 This plugin enables the use of Akenza Core Device Data to be visualized in Grafana.
 
